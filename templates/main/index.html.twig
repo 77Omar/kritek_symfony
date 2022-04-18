@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MainController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .btn{margin-top: 13px;}
+</style>
+
+<div class="example-wrapper">
+    <h1>Hello Kritek! ✅</h1>
+    {{ form_start(form) }}
+    {{ form_row(form.dateInvoice) }}
+    {{ form_row(form.customerId) }}
+
+    <h3>Lines</h3>
+    <div class="row invoiceLines" data-index="{{ form.invoiceLines|length > 0 ? form.invoiceLines|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.invoiceLines.vars.prototype)|e('html_attr') }}">
+        {% for line in form.invoiceLines %}
+            <div class="col-4">{{ form_row(line.description) }}</div>
+            <div class="col-4">{{ form_row(line.quantity) }}</div>
+            <div class="col-4">{{ form_row(line.amount) }}</div>
+        {% endfor %}
+    </div>
+    <button type="button" class="add_item_link btn btn-secondary" data-collection-holder-class="invoiceLines">Add a line</button>
+{{ form_end(form) }}
+</div>
+
+<script type="text/javascript">
+
+
+                    const addFormToCollection = (e) => {
+
+                    const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+                    console.log(collectionHolder.dataset.index);
+                    const item = document.createElement("div");
+
+                    item.innerHTML = collectionHolder
+                        .dataset
+                        .prototype
+                        .replace(
+                        /__name__/,
+                        collectionHolder.dataset.index
+                        );
+                    collectionHolder.appendChild(item);
+                    el = document.getElementById('invoce_form_invoiceLines_' + collectionHolder.dataset.index);
+                    el.classList.add('row');
+                    for (var i = 0; i < el.children.length; i++) {
+                        var child = el.children[i];
+                        if (child.tagName == 'DIV') {
+                            child.classList.add('col-4');
+                        }
+                    }
+
+                    collectionHolder.dataset.index++;
+                    };
+
+                    document.querySelectorAll('.add_item_link').forEach(btn => {
+                    btn.addEventListener("click", addFormToCollection);
+
+                });
+            </script>
+{% endblock %}
